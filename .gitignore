@@ -1,27 +1,64 @@
-# Dependencies
+# ---------- Python (primary stack) ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+sdist/
+develop-eggs/
+.installed.cfg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing / coverage
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Type checking + linting caches
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# ---------- Node.js (fallback for subprojects like a TS MCP server) ----------
 node_modules/
 .pnp.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Env
-.env
-.env.local
-.env.*.local
-
-# Builds
-.next/
+# Build output (Python + Node)
 dist/
 build/
 out/
+.next/
+.cache/
 
-# Logs
-*.log
-npm-debug.log*
+# ---------- Project-specific ----------
+# Local vector DB data
+qdrant_data/
 
-# OS
+# ---------- Environment ----------
+.env
+.env.*
+!.env.example
+
+# ---------- IDE ----------
+.idea/
+.vscode/
+
+# ---------- OS ----------
 .DS_Store
 Thumbs.db
 
-# Editor
-.vscode/
-.idea/
-*.swp
+# ---------- Logs ----------
+*.log
