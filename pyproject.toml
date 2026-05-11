@@ -1,0 +1,144 @@
+[project]
+name = "github-analyzer"
+version = "0.0.1"
+description = "Analyze any public GitHub repository — stack, architecture, technical debt, documentation."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [
+    { name = "Diego Echeverria", email = "diego.echeverria@inallmedia.com" },
+]
+keywords = ["github", "code-analysis", "langgraph", "rag", "qdrant", "mcp"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "qdrant-client>=1.10.0",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.0",
+    "structlog>=24.0.0",
+    "typer>=0.12.0",
+    "anthropic>=0.40.0",
+    "openai>=1.50.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.6.0",
+    "mypy>=1.11.0",
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "pre-commit>=3.7.0",
+]
+
+[project.scripts]
+github-analyzer = "github_analyzer.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/diegocero-dot/github-analyzer"
+Repository = "https://github.com/diegocero-dot/github-analyzer"
+Issues = "https://github.com/diegocero-dot/github-analyzer/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/github_analyzer"]
+
+# ─────────────────────────────────────────────────────────────────────
+# Ruff — linting + formatting
+# ─────────────────────────────────────────────────────────────────────
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+    "TCH", # type-checking imports
+    "PTH", # use pathlib instead of os.path
+    "N",   # pep8-naming
+]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]  # asserts are fine inside tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["github_analyzer"]
+
+# ─────────────────────────────────────────────────────────────────────
+# Mypy — strict type checking
+# ─────────────────────────────────────────────────────────────────────
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+pretty = true
+show_error_codes = true
+files = ["src"]
+
+[[tool.mypy.overrides]]
+module = [
+    "langgraph.*",
+    "qdrant_client.*",
+    "tree_sitter.*",
+    "structlog.*",
+]
+ignore_missing_imports = true
+
+# ─────────────────────────────────────────────────────────────────────
+# Pytest — test runner + integration marker
+# ─────────────────────────────────────────────────────────────────────
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "integration: requires live services (Qdrant, real LLM APIs). Run with --integration.",
+]
+
+# ─────────────────────────────────────────────────────────────────────
+# Coverage — keep core modules above 70%
+# ─────────────────────────────────────────────────────────────────────
+
+[tool.coverage.run]
+source = ["src/github_analyzer"]
+omit = ["src/github_analyzer/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]

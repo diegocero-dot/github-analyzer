@@ -23,11 +23,25 @@ Given the URL of a public GitHub repository, the tool:
 - **Anthropic API (Claude)** — primary LLM provider.
 - **Docker** + **Railway** (or Fly.io) — deployment.
 
-Full architecture in [`ARCHITECTURE.md`](./ARCHITECTURE.md) (coming in M0.2).
+Full architecture in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
 ## Status
 
-Project is in M0 — Setup + Architecture. See [`PROJECT.md`](../PROJECT.md) (workspace-level) for the live roadmap and milestones.
+Project is in M0 — Setup + Architecture (M0.1 + M0.2 + M0.3 done). See [`PROJECT.md`](../PROJECT.md) (workspace-level) for the live roadmap and milestones.
+
+## Quickstart (dev)
+
+Requires `uv` (https://docs.astral.sh/uv/) and Python 3.12+.
+
+```bash
+cd code
+uv sync                    # create virtualenv + install deps
+uv run github-analyzer --help    # smoke test the CLI stub
+uv run pytest tests/unit/        # run the unit test suite
+```
+
+Set up secrets by copying `.env.example` to `.env` and filling the keys for the
+milestone you are working on (see comments inside `.env.example`).
 
 ## License
 

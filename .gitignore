@@ -62,3 +62,12 @@ Thumbs.db
 
 # ---------- Logs ----------
 *.log
+
+# ---------- uv / hatch ----------
+.uv-cache/
+.hatch/
+
+# ---------- Local state ----------
+# SQLite cache for analyzed reports (D-007).
+*.db
+*.db-journal
