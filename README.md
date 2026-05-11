@@ -69,3 +69,24 @@ Stop the stack: `docker compose down`.
 Wipe Qdrant data + report cache volumes: `docker compose down -v`.
 
 OpenAPI docs live at http://localhost:8000/docs once the api container is up.
+
+## CLI usage (M1)
+
+```bash
+cd code
+uv sync --all-extras
+
+# Optional: copy your GitHub token (public_repo scope) into .env for higher rate limits.
+echo 'GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx' >> .env
+
+# Fetch metadata + files + commits from a public repo.
+uv run github-analyzer fetch https://github.com/octocat/Hello-World
+
+# More commits in the listing.
+uv run github-analyzer fetch https://github.com/octocat/Hello-World --commits 10
+
+# Keep the temp clone on disk for inspection.
+uv run github-analyzer fetch https://github.com/octocat/Hello-World --keep-clone
+```
+
+Without `GITHUB_TOKEN` the unauthenticated rate limit is 60 req/hour. With a token it's 5000 req/hour.

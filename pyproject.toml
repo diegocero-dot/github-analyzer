@@ -31,6 +31,7 @@ dependencies = [
     "openai>=1.50.0",
     "httpx>=0.27.0",
     "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
 ]
 
 [project.optional-dependencies]
@@ -39,7 +40,9 @@ dev = [
     "mypy>=1.11.0",
     "pytest>=8.0.0",
     "pytest-cov>=5.0.0",
+    "pytest-asyncio>=0.23.0",
     "pre-commit>=3.7.0",
+    "respx>=0.21.0",
 ]
 
 [project.scripts]
@@ -83,7 +86,10 @@ select = [
 ignore = []
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101"]  # asserts are fine inside tests
+# asserts are fine inside tests; Path/datetime hints used by pytest fixtures at runtime
+"tests/**/*.py" = ["S101", "TCH003"]
+# datetime/Path/HttpUrl are Pydantic field types resolved at runtime — must stay as runtime imports
+"src/github_analyzer/schemas/**/*.py" = ["TCH003"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["github_analyzer"]
@@ -123,8 +129,9 @@ ignore_missing_imports = true
 minversion = "8.0"
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --strict-config"
+asyncio_mode = "auto"
 markers = [
-    "integration: requires live services (Qdrant, real LLM APIs). Run with --integration.",
+    "integration: requires live services (Qdrant, real LLM APIs, GITHUB_TOKEN). Run with --integration.",
 ]
 
 # ─────────────────────────────────────────────────────────────────────
