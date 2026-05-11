@@ -1,0 +1,42 @@
+# ───── Python ─────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+*.egg-info/
+.eggs/
+
+# ───── Tooling caches ─────
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.uv-cache/
+.hatch/
+
+# ───── Tests + docs (not needed in runtime image) ─────
+tests/
+docs/
+
+# ───── Local state ─────
+qdrant_data/
+*.db
+*.db-journal
+
+# ───── Secrets — NEVER copy real .env into the image ─────
+.env
+.env.*
+!.env.example
+
+# ───── Git + IDE ─────
+.git/
+.gitignore
+.github/
+.vscode/
+.idea/
+
+# ───── OS noise ─────
+.DS_Store
+Thumbs.db

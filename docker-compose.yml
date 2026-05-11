@@ -1,0 +1,57 @@
+# github-analyzer — local dev stack.
+# Usage:
+#   cp .env.example .env   # fill secrets you have at this milestone
+#   docker compose up --build
+#   curl http://localhost:8000/health
+# Stop with `docker compose down`. Wipe Qdrant data with `docker compose down -v`.
+
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.13.0
+    container_name: github-analyzer-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # REST + Web UI
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
+    # NOTE: qdrant's slim image has no curl/wget, so a true HTTP healthcheck
+    # is not trivial. Readiness from the API side lives in M7.
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: github-analyzer-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Qdrant is reachable as `qdrant` inside the compose network.
+      QDRANT_URL: http://qdrant:6333
+      # Secrets — passed through from the user's local .env (empty by default).
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+    volumes:
+      # Bind-mount source for dev hot reload. In prod the image's COPY src is used instead.
+      - ./src:/app/src:ro
+      # Persistent volume for the report cache (D-007) — mounted at /data inside the image.
+      - cache_data:/data
+    depends_on:
+      - qdrant
+    command:
+      - uvicorn
+      - github_analyzer.api:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
+
+volumes:
+  qdrant_data:
+    name: github-analyzer_qdrant_data
+  cache_data:
+    name: github-analyzer_cache_data

@@ -46,3 +46,26 @@ milestone you are working on (see comments inside `.env.example`).
 ## License
 
 MIT — see [`LICENSE`](./LICENSE).
+
+## Run with Docker (FastAPI + Qdrant)
+
+Requires Docker Desktop (or Docker Engine + Docker Compose v2).
+
+```bash
+cd code
+cp .env.example .env       # fill secrets you have at this milestone
+docker compose up --build  # starts qdrant on :6333 and api on :8000
+```
+
+Smoke checks:
+
+```bash
+curl http://localhost:8000/health   # → {"status":"ok"}
+curl http://localhost:8000/         # → service identity (name, version, status)
+curl http://localhost:6333/         # → Qdrant root (collections empty in dev)
+```
+
+Stop the stack: `docker compose down`.
+Wipe Qdrant data + report cache volumes: `docker compose down -v`.
+
+OpenAPI docs live at http://localhost:8000/docs once the api container is up.
